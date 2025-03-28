@@ -1,0 +1,49 @@
+%{
+
+    /* Definitions section */
+
+    #include <stdio.h>
+
+
+
+    int capital_word_count = 0;
+
+%}
+
+
+
+/* Rule Section */
+
+%%
+
+[A-Z]+       { printf("CAPITAL WORD: %s\n", yytext); capital_word_count++; } /* Match capital words */
+
+[ \t\n]+     { /* Ignore spaces, tabs, and new lines */ }
+
+.            { /* Ignore other characters */ }
+
+%%
+
+
+
+/* User Subroutines */
+
+int main() {
+
+    printf("Enter text (Ctrl+D to end input on Linux/macOS, Ctrl+Z on Windows):\n");
+
+    yylex(); /* Run lexical analysis */
+
+    printf("\nTotal Capital Words: %d\n", capital_word_count);
+
+    return 0;
+
+}
+
+
+
+int yywrap() {
+
+    return 1;
+
+}

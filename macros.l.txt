@@ -1,0 +1,39 @@
+%{
+#include <stdio.h>
+
+int nmacro = 0;   // Counter for macros
+int nheader = 0;  // Counter for header files
+%}
+
+%%
+^#define { nmacro++; }
+^#include { nheader++; }
+.|\n { /* Ignore other characters */ }
+
+%%
+
+// Function to handle end of input
+int yywrap(void) {
+    return 1;
+}
+
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        FILE *file = fopen(argv[1], "r");
+        if (file) {
+            yyin = file; // Set the input stream to the file
+            yylex();     // Start scanning
+            fclose(file); // Close the file after processing
+        } else {
+            printf("Error opening file.\n");
+            return 1;
+        }
+    } else {
+        printf("Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+
+    printf("Number of macros defined: %d\n", nmacro);
+    printf("Number of header files included: %d\n", nheader);
+    return 0;
+}
